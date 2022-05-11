@@ -122,3 +122,62 @@
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
   font-size: 20px;
 }
+
+
+
+.footer{
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  height: 50px;
+  width: 100vw;
+  /* background-color: #173c05; */
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  /* max-width: 1000px; */
+  margin: auto;
+  padding: 0px 40px;
+  background-color: rgb(1, 124, 255);
+  /* z-index: 4; */
+}
+
+.footer-link {
+  color: white;
+  margin-top: 0px;
+  font-size: 15px;
+  text-decoration: none;
+  background: none;
+  background-color:none;
+}
+
+.footer-link:visited {
+  color: white;
+}
+
+.footer-link:hover {
+  color: rgb(212, 249, 255);
+}
+
+.github-button {
+  height: 40px;
+  width: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  background: transparent;
+  border-radius: 6px;
+  padding-top: 7px;
+  cursor: pointer;
+  transition: 100ms;
+  background: none;
+  background-color: none;
+}
+
+.github-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+

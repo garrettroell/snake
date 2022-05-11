@@ -72,3 +72,4 @@ firebase.json
 404.html
 
 .DS_Store
+.vscode
