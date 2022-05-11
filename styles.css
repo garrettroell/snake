@@ -1,0 +1,124 @@
+* {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(17, 7, 45);
+  font-family: Verdana, sans-serif;
+  font-weight: bold;
+}
+
+.title {
+  margin-top: 60px;
+  margin-bottom: 30px;
+}
+
+.glow {
+  color: #fff;
+  text-align: center;
+  -webkit-animation: glow 1s ease-in-out infinite alternate;
+  -moz-animation: glow 1s ease-in-out infinite alternate;
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #000073,
+      0 0 40px #000073, 0 0 50px #000073, 0 0 60px #000073, 0 0 70px #000073;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #004da6, 0 0 40px #004da6,
+      0 0 50px #004da6, 0 0 60px #004da6, 0 0 70px #004da6, 0 0 80px #004da6;
+  }
+}
+
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #000073,
+      0 0 40px #000073, 0 0 50px #000073, 0 0 60px #000073, 0 0 70px #000073;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6,
+      0 0 50px #004da6, 0 0 60px #004da6, 0 0 70px #004da6, 0 0 80px #004da6;
+  }
+}
+
+.content {
+  max-width: 500px;
+  /* height: min(500px, 100vw); */
+  margin: auto;
+  margin-top: 40px;
+  padding: 0 20px;
+}
+
+.game-section {
+  width: 100%;
+  height: min(500px, 100vw);
+  border-radius: 17px;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-section {
+  width: 100%;
+  height: min(500px, 100vw);
+  border-radius: 17px;
+
+  display: flex;
+  flex-direction: column;
+}
+.row {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  border: 1px solid rgb(72, 75, 97);
+}
+
+.col {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  border: 1px solid rgb(72, 75, 97);
+}
+
+.head-cell {
+  background-color: rgb(0, 217, 255);
+  border-radius: 5px;
+  z-index: 2;
+}
+
+.snake-cell {
+  background-color: rgb(1, 124, 255);
+  border: 1px solid rgb(94, 94, 94);
+  z-index: 2;
+  border-radius: 5px;
+}
+
+.food-cell {
+  background-color: white;
+  border: 1px solid #00a621;
+  box-shadow: 0 0 2px 1px #ffffffbd, 0 0 4px 2px #beffcbbd,
+    0 0 6px 3px #82ff9bbd, 0 0 10px 5px #36ff5ebd;
+  border-radius: 10px;
+  transform: translateY(-0.5px);
+  z-index: 2;
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  width: min(500px, 100vw);
+  margin: auto;
+  padding: 20px;
+}
+
+.score-value {
+  font-size: 28px;
+}
+
+.last-score,
+.top-score {
+  display: flex;
+  align-items: center;
+  color: rgb(0, 217, 255);
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+  font-size: 20px;
+}

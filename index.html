@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="meta/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="meta/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="meta/favicon-16x16.png">
+  <link rel="manifest" href="meta/site.webmanifest">
+  <link rel="mask-icon" href="meta/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="stylesheet" href="styles.css">
+  <title>Snake</title>
+</head>
+
+<script>
+  // define top level variables
+  let updateRate = 100
+  let gridSize = 15
+  let headX = 5;
+  let headY = 5;
+  let nextX;
+  let nextY;
+
+  let snake = {
+    1: { 'X': 5, 'Y': 6 },
+    2: { 'X': 5, 'Y': 7 },
+    3: { 'X': 5, 'Y': 8 },
+  }
+  let direction = 'up'
+
+  // define function to create new grid object
+  function createGrid() {
+    grid = {}
+
+    // add rows and columns to grid object
+    for (var r = 0; r < gridSize; r++) {
+      grid[r] = {}
+      for (var c = 0; c < gridSize; c++) {
+        // this if statement prevents a bug where the grid gets extra columns
+        if (r < gridSize && c < gridSize) {
+          grid[r][c] = ''
+        }
+
+      }
+    }
+
+    // define starting head position
+    grid[headY][headX] = 'head'
+
+    // add the initial food square to the grid
+    addFood(grid)
+
+    return grid
+  }
+
+  // get the next location of the head based on direction and location
+  function nextHeadPosition({ direction, headX, headY }) {
+    // let nextX, nextY;
+
+    if (direction === 'left') {
+      nextX = headX === 0 ? gridSize - 1 : headX - 1
+      nextY = headY
+    }
+    if (direction === 'right') {
+      nextX = headX === gridSize - 1 ? 0 : headX + 1
+      nextY = headY
+    }
+    if (direction === 'up') {
+      nextX = headX
+      nextY = headY === 0 ? gridSize - 1 : headY - 1
+    }
+    if (direction === 'down') {
+      nextX = headX
+      nextY = headY === gridSize - 1 ? 0 : headY + 1
+    }
+
+    return [nextX, nextY]
+  }
+
+
+  // function to run each interval
+  function updateGrid({ grid, direction }) {
+    const scoreValue = document.getElementById('score-value')
+    const recentScoreValue = document.getElementById('recent-score-value')
+    const topScoreValue = document.getElementById('top-score-value')
+
+    // get the next location of head based on current position and direction
+    let [nextX, nextY] = nextHeadPosition({ direction, headX, headY })
+
+    // check if the next spot is the one with food.
+    if (grid[nextY][nextX] === 'food') {
+      addFood(grid)
+      snake = extendSnake(snake)
+      snake = extendSnake(snake)
+      snake = extendSnake(snake)
+
+      const newScore = parseInt(scoreValue.innerText) + 1
+
+      scoreValue.innerText = newScore
+      topScoreValue.innerText = newScore > parseInt(topScoreValue.innerText) ? newScore : topScoreValue.innerText
+    }
+
+    // check if the head hit the snake
+    if (grid[nextY][nextX] === 'snake') {
+
+      snake = {
+        1: { 'X': 5, 'Y': 6 },
+        2: { 'X': 5, 'Y': 7 },
+        3: { 'X': 5, 'Y': 8 },
+      }
+      direction = 'up'
+      updateRate = 100
+      grid = createGrid()
+      recentScoreValue.innerText = scoreValue.innerText
+      scoreValue.innerText = '0'
+    }
+
+    // update the location of the head
+    grid[nextY][nextX] = 'head'
+
+    // get the new locations for the snake
+    let newSnake = {}
+    Object.keys(snake).forEach(index => {
+
+      // get the location of the cell
+      const cellX = snake[index]['X']
+      const cellY = snake[index]['Y']
+
+      // the first cell gets the old head position
+      if (parseInt(index) === 1) {
+        newSnake[index] = {
+          'X': headX,
+          'Y': headY
+        }
+      } else {
+        // every other cell gets the previous cell
+        newSnake[index] = {
+          'X': snake[parseInt(index) - 1]['X'],
+          'Y': snake[parseInt(index) - 1]['Y'],
+        }
+      }
+      // the location of the last cell of the snake becomes blank
+      if (parseInt(index) === Object.keys(snake).length) {
+        // this is the last spot in the snake
+        try {
+          grid[cellY][cellX] = ''
+        } catch {
+          console.log('there is a problem with location (x,y)', cellX, cellY)
+        }
+      }
+    })
+
+    snake = newSnake
+
+    grid[headY][headX] = 'snake'
+    headX = nextX
+    headY = nextY
+    return grid
+  }
+
+  function extendSnake(snake) {
+
+    // the locations of the last and second to last cells of snake
+    const length = Object.keys(snake).length
+    lastCell = snake[length]
+    secondToLastCell = snake[length - 1]
+
+    // if the snake is traveling vertically update the Y value. Check direction of travel
+    if (lastCell.X === secondToLastCell.X) {
+      snake[length + 1] = {
+        'X': lastCell.X,
+        'Y': lastCell.Y > secondToLastCell.Y ? lastCell.Y + 1 : lastCell.Y - 1
+      }
+    }
+    // if the snake is traveling horizontally update the X value. Check direction of travel
+    else {
+      snake[length + 1] = {
+        'X': lastCell.X > secondToLastCell.X ? lastCell.X + 1 : lastCell.X - 1,
+        'Y': lastCell.Y
+      }
+    }
+
+    return snake
+  }
+
+  function renderGrid({ grid, gridSection }) {
+
+    // remove old grid 
+    while (gridSection.firstChild) {
+      gridSection.removeChild(gridSection.firstChild);
+    }
+
+    // define a boolean variable to check if there is a food spot on grid
+    let containsFood = false
+
+    // create each row of the grid
+    for (var r = 0; r < Object.keys(grid).length; r++) {
+      let row = document.createElement('div');
+      row.classList.add('row')
+
+      // for each grid
+      for (var c = 0; c < Object.keys(grid[0]).length; c++) {
+        let col = document.createElement('div');
+        col.classList.add('col')
+
+        // add styles based on the cell value in the grid object
+        let cellValue = grid[r][c]
+        if (cellValue === 'head') {
+          col.classList.add('head-cell')
+        }
+        if (cellValue === 'snake') {
+          col.classList.add('snake-cell')
+        }
+        if (cellValue === 'food') {
+          col.classList.add('food-cell')
+          containsFood = true
+        }
+        // add cell to the row
+        row.append(col)
+      }
+      // add row to the gridSection
+      gridSection.append(row)
+    }
+    // if the grid does not have a food section, then add food to grid
+    if (!containsFood) {
+      addFood(grid)
+    }
+  }
+
+
+  function addFood(grid) {
+
+    let foodX = Math.floor(Math.random() * gridSize)
+    let foodY = Math.floor(Math.random() * gridSize)
+
+    let spotValue = grid[foodY][foodX]
+
+    // get new point until the food is on a blank spot
+    while (spotValue === 'snake' || spotValue === 'head') {
+      foodX = Math.floor(Math.random() * gridSize)
+      foodY = Math.floor(Math.random() * gridSize)
+
+      spotValue = grid[foodY][foodX]
+    }
+
+    // add food to the grid
+    grid[foodY][foodX] = 'food'
+  }
+
+  function handleKeyPress(e) {
+
+    e = e || window.event;
+
+    // handle up keypress
+    if (e.keyCode == '38' && (direction === 'left' || direction === 'right')) {
+      direction = 'up'
+    }
+    else if (e.keyCode == '40' && (direction === 'left' || direction === 'right')) {
+      direction = 'down'
+    }
+    else if (e.keyCode == '37' && (direction === 'up' || direction === 'down')) {
+      direction = 'left'
+    }
+    else if (e.keyCode == '39' && (direction === 'up' || direction === 'down')) {
+      direction = 'right'
+    }
+  }
+
+  document.onkeydown = handleKeyPress;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const gridSection = document.getElementById('grid-section')
+
+
+    let grid = createGrid()
+
+    var intervalID = setInterval(() => {
+      grid = updateGrid({ grid, direction })
+      renderGrid({ grid, gridSection })
+    }, 100);
+
+  });
+</script>
+
+<body>
+  <div class="content">
+    <h1 class="glow title">Snake</h1>
+    <div class="game-section">
+      <div class="grid-section" id="grid-section"></div>
+    </div>
+  </div>
+  <div class="bottom-row">
+    <div class="last-score">
+      <p class="">Last:&nbsp;</p>
+      <p class="" id="recent-score-value">0</p>
+    </div>
+    <p class="glow score-value" id="score-value">0</p>
+    <div class="top-score">
+      <p class="">Top:&nbsp;</p>
+      <p class="" id="top-score-value">0</p>
+    </div>
+  </div>
+</body>
+
+</html>
